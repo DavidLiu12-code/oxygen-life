@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#e8eef5" />
+  <title>氧气的一生</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="topbar">
+      <div class="title">氧<span class="dot">气</span>的一生</div>
+      <div class="meta">
+        <div>今日课程 <span id="course">—</span></div>
+        <div>最佳 <span id="best">0</span></div>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="form-row">
+        <div class="label">现在的样子</div>
+        <div>
+          <span class="form-formula" id="form-display">O₂</span>
+          <span class="form-name" id="form-name">氧气分子</span>
+        </div>
+      </div>
+      <div class="score-block">
+        <div class="label">分数</div>
+        <div class="score" id="score">0</div>
+      </div>
+      <div>
+        <div class="label">现在的位置</div>
+        <div class="place" id="place">上空的顶点</div>
+      </div>
+    </div>
+    <div class="stage-wrap">
+      <canvas id="game" width="360" height="640"></canvas>
+      <div id="help-panel">
+        <h2>怎么玩</h2>
+        <div>在上空拉开氧气再松手，它会一边撞钉子一边往下落。撞上吸引更强的元素就会「换乘」，形态改变。雷电、云、植物、动物、电解铝厂、水泥窑也会改写命运。落到地壳深处，一生就定格了。</div>
+        <div class="small">方块上的数字 = 对氧的吸引强度（氧化物生成的 Gibbs 自由能，kJ/mol·每氧原子）。比当前形态弱的目标会变淡，撞上去只会弹开。非官方学习改编。</div>
+      </div>
+      <div id="result-overlay" class="hidden" aria-hidden="true"></div>
+      <div id="toast"></div>
+    </div>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
