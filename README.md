@@ -2,7 +2,7 @@
 
 日文 Claude Artifact 游戏「オキシの一生」的**非官方中文学习改编**。交互与视觉按用户录屏观察重建，**不是**源码级 1:1。
 
-试玩（GitHub Pages）：见仓库 Settings → Pages，或本 README 发布后的链接。
+试玩：https://davidliu12-code.github.io/oxygen-life/
 
 ## 玩法
 
