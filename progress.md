@@ -24,3 +24,8 @@ Original prompt: 用REA逆向复刻 Claude Artifact 日文游戏「オキシの�
 - 钉位/完整元素表/精确分数公式为观察重建，非源码
 - 部分亲和力为热力学近似（README 已标明）
 - 无原版音效；复活主要靠电解铝/光合作用事件
+
+## 交付
+- 预览：https://davidliu12-code.github.io/oxygen-life/
+- 仓库：https://github.com/DavidLiu12-code/oxygen-life
+- curl 验证见本轮终端
