@@ -6,6 +6,7 @@ import {
   FORMS, ELEMENT_DEFS, EVENT_DEFS, END_RARITY,
   formAffinity, layerName, todayCourse,
 } from './data.js';
+import { sfx } from './sound.js';
 
 const W = 360;           // 逻辑板宽
 const MAX_DEPTH = 4200;  // nm
@@ -30,6 +31,7 @@ export class Game {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.ui = ui;
+    window.__sfx = sfx;
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.mode = 'boot'; // boot | aim | playing | result
     this.best = Number(localStorage.getItem(BEST_KEY) || 0);
@@ -202,6 +204,8 @@ export class Game {
         this.pointer.y = y;
         this.showHelp = false;
         this.ui.hideHelp();
+        sfx.ensure();
+        sfx.pull();
       } else if (this.mode === 'playing') {
         // allow a mid-air nudge sling once? recording shows only start slingshot
         // ignore
@@ -235,6 +239,7 @@ export class Game {
         this.ball.vy = (flyY / len) * power * 5.5;
         // bias downward a bit if almost upward
         if (this.ball.vy < 0.5) this.ball.vy += 1.2;
+        sfx.release(power / 3);
         this.mode = 'playing';
         this.ui.onState(this);
       }
@@ -422,6 +427,7 @@ export class Game {
         if (vn < 0) {
           b.vx -= (1 + RESTITUTION) * vn * nx;
           b.vy -= (1 + RESTITUTION) * vn * ny;
+          if (Math.hypot(b.vx, b.vy) > 0.8) sfx.peg();
         }
       }
     }
@@ -443,6 +449,7 @@ export class Game {
         if (vn < 0) {
           b.vx -= (1 + 0.85) * vn * nx;
           b.vy -= (1 + 0.85) * vn * ny;
+          sfx.bounceSoft();
         }
       }
     }
@@ -478,8 +485,11 @@ export class Game {
       if (t.noReact || t.affinity == null) {
         if (!t.logged) {
           t.logged = true;
+          sfx.noReact();
           this._pushBubble(t.transferMsg || '不反应', t.x, t.y - 30);
           this._logEvent({ depth: this.depth, msg: t.transferMsg || `${t.symbol}不反应`, transfer: false });
+        } else {
+          sfx.bounceSoft();
         }
         continue;
       }
@@ -487,8 +497,11 @@ export class Game {
       if (t.affinity <= curA) {
         if (!t.loggedWeak) {
           t.loggedWeak = true;
+          sfx.weak();
           this._pushBubble(t.weakMsg || `${t.symbol}太弱，换乘不了`, t.x, t.y - 30);
           this._logEvent({ depth: this.depth, msg: t.weakMsg || `${t.symbol}太弱，换乘不了`, transfer: false });
+        } else {
+          sfx.bounceSoft();
         }
         continue;
       }
@@ -514,6 +527,7 @@ export class Game {
       if (prev === 'H2O' && t.form === 'Fe2O3') {
         this._pushBubble('雨滴换乘到铁上', t.x, t.y - 36);
       }
+      sfx.transfer();
       this._pushBubble(msg, t.x, t.y - 36, eq);
       this._logEvent({ depth: this.depth, msg, equation: eq, transfer: true, formId: this.formId });
       this.score += Math.round(t.affinity * 0.35 + 40);
@@ -539,11 +553,17 @@ export class Game {
       if (res.kind === 'transfer' && res.formId) {
         this.formId = res.formId;
         this.transfers.push(this.formId);
-        if (res.revive) this.revives += 1;
+        if (res.revive) {
+          this.revives += 1;
+          sfx.revive();
+        } else {
+          sfx.transfer();
+        }
         this.score += 80;
         this._pushBubble(res.msg, ez.x, ez.y - 30, res.equation);
         this._logEvent({ depth: this.depth, msg: res.msg, equation: res.equation, transfer: true, formId: this.formId, revive: !!res.revive });
       } else {
+        sfx.event();
         this._pushBubble(res.msg, ez.x, ez.y - 30);
         this._logEvent({ depth: this.depth, msg: res.msg, transfer: false });
       }
@@ -567,6 +587,7 @@ export class Game {
       this.best = this.score;
       localStorage.setItem(BEST_KEY, String(this.best));
     }
+    sfx.result();
     this.ui.showResult(this);
     this.ui.onState(this);
   }

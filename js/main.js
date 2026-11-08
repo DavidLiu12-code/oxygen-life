@@ -5,6 +5,7 @@ const canvas = document.getElementById('game');
 const ui = new UI();
 const game = new Game(canvas, ui);
 window.__game = game;
+ui.bindMute?.(document.getElementById('btn-mute'));
 
 window.render_game_to_text = () => JSON.stringify(game.snapshot());
 window.advanceTime = (ms) => game.advanceTime(ms);

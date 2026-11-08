@@ -1,3 +1,4 @@
+import { sfx } from './sound.js';
 import { FORMS, END_RARITY, layerName, formAffinity } from './data.js';
 
 export class UI {
@@ -14,9 +15,10 @@ export class UI {
       toast: document.getElementById('toast'),
     };
     document.getElementById('btn-again')?.addEventListener('click', () => {
+      sfx.uiClick();
       window.__game?.reset();
     });
-    document.getElementById('btn-copy')?.addEventListener('click', () => this.copyResult());
+    document.getElementById('btn-copy')?.addEventListener('click', () => { sfx.uiClick(); this.copyResult(); });
     document.getElementById('btn-share')?.addEventListener('click', () => this.shareX());
   }
 
@@ -133,9 +135,9 @@ export class UI {
     this.els.result.classList.remove('hidden');
     this.els.result.setAttribute('aria-hidden', 'false');
     // rebind
-    document.getElementById('btn-again').addEventListener('click', () => window.__game?.reset());
-    document.getElementById('btn-copy').addEventListener('click', () => this.copyResult());
-    document.getElementById('btn-share').addEventListener('click', () => this.shareX());
+    document.getElementById('btn-again').addEventListener('click', () => { sfx.uiClick(); window.__game?.reset(); });
+    document.getElementById('btn-copy').addEventListener('click', () => { sfx.uiClick(); this.copyResult(); });
+    document.getElementById('btn-share').addEventListener('click', () => { sfx.uiClick(); this.shareX(); });
 
     this._lastShareText = this._buildShareText(game, rarity, turbPct, combinedLabel);
   }
@@ -150,6 +152,7 @@ export class UI {
     const text = this._lastShareText || '';
     try {
       await navigator.clipboard.writeText(text);
+      sfx.copyOk();
       this.toast('已复制到剪贴板');
     } catch {
       this.toast('复制失败，请手动选择');
@@ -175,6 +178,20 @@ export class UI {
     clearTimeout(this._toastTimer);
     this._toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
   }
+
+  bindMute(btn) {
+    if (!btn) return;
+    const sync = () => {
+      btn.textContent = sfx.enabled ? '音效开' : '音效关';
+      btn.setAttribute('aria-pressed', sfx.enabled ? 'true' : 'false');
+    };
+    sync();
+    btn.addEventListener('click', () => {
+      sfx.toggle();
+      sync();
+      if (sfx.enabled) sfx.uiClick();
+    });
+  }
 }
 
 function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
@@ -182,3 +199,4 @@ function MAX_SAFE(a, b) { return Math.max(a, b); }
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+

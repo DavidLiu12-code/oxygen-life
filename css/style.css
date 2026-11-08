@@ -279,3 +279,6 @@ html, body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+.mute-btn{margin-left:8px;border:1px solid #c5d0db;background:#fff;border-radius:999px;padding:2px 8px;font-size:11px;color:#334;cursor:pointer}
+.mute-btn[aria-pressed="false"]{opacity:.55}
